@@ -1,0 +1,173 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+class AddressEntry {
+public:
+    string name;
+    string phone;
+    string email;
+    AddressEntry* next;
+
+    // Constructor to initialize an entry
+    AddressEntry(string n, string p, string e) {
+        name = n;
+        phone = p;
+        email = e;
+        next = nullptr;  // Initially, the next pointer is null
+    }
+};
+
+class AddressBook {
+private:
+    AddressEntry* head;  // Pointer to the head of the linked list
+
+public:
+    AddressBook() {
+        head = nullptr;  // Initially, the list is empty
+    }
+
+    // Function to add a new entry
+    void addEntry(string name, string phone, string email) {
+        AddressEntry* newEntry = new AddressEntry(name, phone, email);
+        if (!head) {
+            head = newEntry;  // If list is empty, the new entry becomes the head
+        } else {
+            AddressEntry* temp = head;
+            while (temp->next != nullptr) {
+                temp = temp->next;  // Traverse to the end of the list
+            }
+            temp->next = newEntry;  // Add new entry at the end
+        }
+        cout << "New entry added successfully!\n";
+    }
+
+    // Function to delete an entry by name
+    void deleteEntry(string name) {
+        if (!head) {
+            cout << "Address book is empty.\n";
+            return;
+        }
+
+        // Special case if the entry to delete is the head
+        if (head->name == name) {
+            AddressEntry* temp = head;
+            head = head->next;
+            delete temp;
+            cout << "Entry deleted successfully!\n";
+            return;
+        }
+
+        AddressEntry* current = head;
+        AddressEntry* prev = nullptr;
+
+        // Traverse the list to find the entry to delete
+        while (current != nullptr && current->name != name) {
+            prev = current;
+            current = current->next;
+        }
+
+        // If entry was found, delete it
+        if (current) {
+            prev->next = current->next;
+            delete current;
+            cout << "Entry deleted successfully!\n";
+        } else {
+            cout << "Entry not found.\n";
+        }
+    }
+
+    // Function to save the address book to a file
+    void saveToFile(string filename) {
+        ofstream outFile(filename);
+        if (!outFile) {
+            cout << "Error opening file.\n";
+            return;
+        }
+
+        AddressEntry* temp = head;
+        while (temp != nullptr) {
+            outFile << "Name: " << temp->name << "\n";
+            outFile << "Phone: " << temp->phone << "\n";
+            outFile << "Email: " << temp->email << "\n\n";
+            temp = temp->next;
+        }
+
+        outFile.close();
+        cout << "Address book saved to " << filename << "\n";
+    }
+
+    // Function to display all entries
+    void displayEntries() {
+        if (!head) {
+            cout << "Address book is empty.\n";
+            return;
+        }
+
+        AddressEntry* temp = head;
+        while (temp != nullptr) {
+            cout << "Name: " << temp->name << "\n";
+            cout << "Phone: " << temp->phone << "\n";
+            cout << "Email: " << temp->email << "\n\n";
+            temp = temp->next;
+        }
+    }
+};
+
+int main() {
+    AddressBook book;
+    int choice;
+    string name, phone, email, filename;
+
+    do {
+        cout << "\n--- Address Book Menu ---\n";
+        cout << "1. Add Entry\n";
+        cout << "2. Delete Entry\n";
+        cout << "3. Display All Entries\n";
+        cout << "4. Save Address Book to File\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter name: ";
+                cin.ignore();
+                getline(cin, name);
+                cout << "Enter phone: ";
+                getline(cin, phone);
+                cout << "Enter email: ";
+                getline(cin, email);
+                book.addEntry(name, phone, email);
+                break;
+
+            case 2:
+                cout << "Enter the name of the entry to delete: ";
+                cin.ignore();
+                getline(cin, name);
+                book.deleteEntry(name);
+                break;
+
+            case 3:
+                book.displayEntries();
+                break;
+
+            case 4:
+                cout << "Enter filename to save: ";
+                cin.ignore();
+                getline(cin, filename);
+                book.saveToFile(filename);
+                break;
+
+            case 5:
+                cout << "Exiting...\n";
+                break;
+
+            default:
+                cout << "Invalid choice. Try again.\n";
+        }
+    } while (choice != 5);
+
+    return 0;
+}
