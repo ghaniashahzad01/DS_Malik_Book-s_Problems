@@ -1,0 +1,157 @@
+#include <iostream>
+using namespace std;
+
+// Node structure for linked list
+struct nodeType {
+    int info;
+    nodeType* link;
+};
+
+// Abstract base class (linkedListType)
+class linkedListType {
+public:
+    // Pure virtual functions (Abstract functions)
+    virtual void deleteSmallestNode() = 0;
+    virtual void deleteAllOccurrences(int x) = 0;
+
+    // Other linked list functions (already defined in linkedListType)
+    virtual bool isEmpty() const = 0;
+    virtual void insertFirst(int item) = 0;
+    virtual void print() const = 0;
+
+protected:
+    nodeType* first;
+    nodeType* last;
+    int count;
+};
+
+// unorderedLinkedList class inheriting from linkedListType
+class unorderedLinkedList : public linkedListType {
+public:
+    unorderedLinkedList() {
+        first = nullptr;
+        last = nullptr;
+        count = 0;
+    }
+
+    // Function to check if the list is empty
+    bool isEmpty() const override {
+        return (first == nullptr);
+    }
+
+    // Function to insert a new node at the beginning
+    void insertFirst(int item) override {
+        nodeType* newNode = new nodeType;
+        newNode->info = item;
+        newNode->link = first;
+        first = newNode;
+        if (last == nullptr) {
+            last = first;
+        }
+        count++;
+    }
+
+    // Function to print the list
+    void print() const override {
+        nodeType* current = first;
+        while (current != nullptr) {
+            cout << current->info << " ";
+            current = current->link;
+        }
+        cout << endl;
+    }
+
+    // Find and delete the node with the smallest info
+    void deleteSmallestNode() override {
+        if (isEmpty()) {
+            cout << "List is empty." << endl;
+            return;
+        }
+
+        nodeType* current = first;
+        nodeType* prev = nullptr;
+        nodeType* smallest = first;
+        nodeType* smallestPrev = nullptr;
+
+        while (current != nullptr) {
+            if (current->info < smallest->info) {
+                smallest = current;
+                smallestPrev = prev;
+            }
+            prev = current;
+            current = current->link;
+        }
+
+        if (smallestPrev == nullptr) { // Smallest node is the first node
+            first = first->link;
+        } else {
+            smallestPrev->link = smallest->link;
+        }
+
+        if (smallest == last) {
+            last = smallestPrev;
+        }
+
+        delete smallest;
+        count--;
+    }
+
+    // Find and delete all occurrences of a given info
+    void deleteAllOccurrences(int x) override {
+        if (isEmpty()) {
+            cout << "List is empty." << endl;
+            return;
+        }
+
+        nodeType* current = first;
+        nodeType* prev = nullptr;
+
+        while (current != nullptr) {
+            if (current->info == x) {
+                nodeType* toDelete = current;
+                if (prev == nullptr) { // Deleting the first node
+                    first = current->link;
+                } else {
+                    prev->link = current->link;
+                }
+                current = current->link;
+                if (toDelete == last) {
+                    last = prev;
+                }
+                delete toDelete;
+                count--;
+            } else {
+                prev = current;
+                current = current->link;
+            }
+        }
+    }
+};
+
+// Test program
+int main() {
+    unorderedLinkedList list;
+
+    // Insert nodes into the linked list
+    list.insertFirst(5);
+    list.insertFirst(3);
+    list.insertFirst(7);
+    list.insertFirst(2);
+    list.insertFirst(5);
+    list.insertFirst(2);
+
+    cout << "Original List: ";
+    list.print();
+
+    // Delete the smallest node
+    cout << "Deleting the smallest node..." << endl;
+    list.deleteSmallestNode();
+    list.print();
+
+    // Delete all occurrences of 5
+    cout << "Deleting all occurrences of 5..." << endl;
+    list.deleteAllOccurrences(5);
+    list.print();
+
+    return 0;
+}
