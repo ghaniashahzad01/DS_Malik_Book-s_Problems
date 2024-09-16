@@ -1,0 +1,93 @@
+#include <iostream>
+using namespace std;
+
+// Node structure for linked list
+template <class Type>
+struct nodeType {
+    Type info;               // Data in the node
+    nodeType<Type> *next;    // Pointer to the next node
+};
+
+// linkedListType class
+template <class Type>
+class linkedListType {
+protected:
+    nodeType<Type> *head;    // Pointer to the first node in the list
+    nodeType<Type> *tail;    // Pointer to the last node in the list
+    int count;               // Count of nodes in the list
+
+public:
+    // Constructor
+    linkedListType() {
+        head = nullptr;
+        tail = nullptr;
+        count = 0;
+    }
+
+    // Function to insert a new element at the end of the list
+    void insertLast(const Type &newElement) {
+        nodeType<Type> *newNode = new nodeType<Type>;
+        newNode->info = newElement;
+        newNode->next = nullptr;
+
+        if (head == nullptr) { // If the list is empty
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail->next = newNode;
+            tail = newNode;
+        }
+        count++;
+    }
+
+    // Function to print the list in normal order
+    void displayList() const {
+        nodeType<Type> *current = head;
+        while (current != nullptr) {
+            cout << current->info << " ";
+            current = current->next;
+        }
+        cout << endl;
+    }
+
+    // Recursive function to print the list backward
+    void recursiveReversePrintHelper(nodeType<Type> *current) const {
+        if (current == nullptr) // Base case: if the list is empty or we reach the end
+            return;
+        recursiveReversePrintHelper(current->next); // Recursive call
+        cout << current->info << " ";               // Print after recursive call
+    }
+
+    // Wrapper function for recursive reverse print
+    void recursiveReversePrint() const {
+        recursiveReversePrintHelper(head);
+        cout << endl;
+    }
+
+    // Function to reverse print using another recursive function (alternative name)
+    void reversePrint() const {
+        cout << "Printing list in reverse order: ";
+        recursiveReversePrint();
+    }
+};
+
+// Main function to test the linked list reverse print
+int main() {
+    linkedListType<int> list;
+
+    // Insert elements into the list
+    list.insertLast(10);
+    list.insertLast(20);
+    list.insertLast(30);
+    list.insertLast(40);
+    list.insertLast(50);
+
+    // Display the list in normal order
+    cout << "Original List: ";
+    list.displayList();
+
+    // Print the list in reverse order using recursion
+    list.reversePrint();
+
+    return 0;
+}
