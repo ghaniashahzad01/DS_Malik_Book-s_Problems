@@ -1,0 +1,125 @@
+#include <iostream>
+using namespace std;
+
+// Define the structure for each node in the linked list
+template <class Type>
+struct nodeType {
+    Type info;               // Data in the node
+    nodeType<Type> *next;    // Pointer to the next node
+};
+
+// Define the linkedListType class
+template <class Type>
+class linkedListType {
+protected:
+    nodeType<Type> *head;    // Pointer to the first node in the list
+    nodeType<Type> *tail;    // Pointer to the last node in the list
+    int count;               // Count of nodes in the list
+
+public:
+    // Constructor to initialize an empty linked list
+    linkedListType() {
+        head = nullptr;
+        tail = nullptr;
+        count = 0;
+    }
+
+    // Function to insert a new element at the end of the list
+    void insertLast(const Type &newElement) {
+        nodeType<Type> *newNode = new nodeType<Type>;
+        newNode->info = newElement;
+        newNode->next = nullptr;
+
+        if (head == nullptr) { // If the list is empty
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail->next = newNode;
+            tail = newNode;
+        }
+        count++;
+    }
+
+    // Function to display the list in normal order
+    void displayList() const {
+        nodeType<Type> *current = head;
+        while (current != nullptr) {
+            cout << current->info << " ";
+            current = current->next;
+        }
+        cout << endl;
+    }
+
+    // Function to get the kth element in the list
+    Type getKthElement(int k) {
+        if (k <= 0 || k > count) {
+            cout << "No such element exists. Terminating program." << endl;
+            exit(1); // Exit the program if the element doesn't exist
+        }
+
+        nodeType<Type> *current = head;
+        for (int i = 1; i < k; i++) {
+            current = current->next;
+        }
+        return current->info;
+    }
+
+    // Function to delete the kth element in the list
+    void deleteKthElement(int k) {
+        if (k <= 0 || k > count) {
+            cout << "No such element exists. Terminating program." << endl;
+            exit(1); // Exit the program if the element doesn't exist
+        }
+
+        nodeType<Type> *current = head;
+        nodeType<Type> *previous = nullptr;
+
+        if (k == 1) {  // Deleting the first element
+            head = head->next;
+            delete current;
+            if (head == nullptr) {
+                tail = nullptr;
+            }
+        } else {
+            for (int i = 1; i < k; i++) {
+                previous = current;
+                current = current->next;
+            }
+
+            previous->next = current->next;
+            if (current == tail) {
+                tail = previous;
+            }
+            delete current;
+        }
+        count--;
+    }
+};
+
+int main() {
+    // Create a linked list of integers
+    linkedListType<int> list;
+
+    // Insert some elements into the list
+    list.insertLast(10);
+    list.insertLast(20);
+    list.insertLast(30);
+    list.insertLast(40);
+    list.insertLast(50);
+
+    // Display the original list
+    cout << "Original List: ";
+    list.displayList();
+
+    // Get the 3rd element in the list
+    int kthElement = list.getKthElement(3);
+    cout << "3rd element: " << kthElement << endl;
+
+    // Delete the 2nd element in the list
+    cout << "Deleting 2nd element..." << endl;
+    list.deleteKthElement(2);
+    cout << "List after deletion: ";
+    list.displayList();
+
+    return 0;
+}
