@@ -1,0 +1,87 @@
+#include <iostream>
+using namespace std;
+
+// Node structure for the linked list
+struct Node {
+    int data;
+    Node* next;
+};
+
+// Class definition for the linked list
+class linkedListType {
+public:
+    linkedListType();   // Constructor
+    void insertFirst(int value);   // Function to insert at the beginning
+    void reversePrint();   // Function to print the list in reverse
+    void recursiveReversePrint(Node* current);  // Recursive function to print in reverse
+    void print();  // Function to print the list normally
+    Node* getHead();  // Get the head of the list
+
+private:
+    Node* head;  // Pointer to the first node
+};
+
+// Constructor to initialize the linked list
+linkedListType::linkedListType() {
+    head = nullptr;  // Set head to null
+}
+
+// Function to insert a node at the beginning of the linked list
+void linkedListType::insertFirst(int value) {
+    Node* newNode = new Node();  // Create a new node
+    newNode->data = value;  // Set the data
+    newNode->next = head;  // Point the new node to the current head
+    head = newNode;  // Make the new node the head
+}
+
+// Function to print the list in reverse using recursion
+void linkedListType::recursiveReversePrint(Node* current) {
+    if (current == nullptr) {
+        return;  // Base case: If the current node is null, return
+    }
+    
+    recursiveReversePrint(current->next);  // Recursive call with the next node
+    cout << current->data << " ";  // Print the current node's data
+}
+
+// Function to call recursive reverse print starting from the head
+void linkedListType::reversePrint() {
+    cout << "List in reverse order: ";
+    recursiveReversePrint(head);  // Call the recursive reverse print function
+    cout << endl;
+}
+
+// Function to print the list normally
+void linkedListType::print() {
+    Node* current = head;  // Start from the head node
+    cout << "List: ";
+    while (current != nullptr) {
+        cout << current->data << " ";  // Print the data
+        current = current->next;  // Move to the next node
+    }
+    cout << endl;
+}
+
+// Function to return the head of the list
+Node* linkedListType::getHead() {
+    return head;
+}
+
+// Main function to test the reverse print
+int main() {
+    linkedListType myList;  // Create a linked list object
+
+    // Insert some elements into the list
+    myList.insertFirst(5);
+    myList.insertFirst(10);
+    myList.insertFirst(15);
+    myList.insertFirst(20);
+
+    // Print the list normally
+    myList.print();
+
+    // Print the list in reverse order using recursion
+    myList.reversePrint();
+
+    return 0;
+}
